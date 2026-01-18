@@ -21,10 +21,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private UsersService usersService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
 
@@ -32,26 +33,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
 
             try {
+                // Récupération de l'email depuis le token
                 String email = JwtTokenManager.getUser(token);
 
-                if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    var userDetails = usersService.loadUserByUsername(email);
+                // Chargement de l'utilisateur
+                var userDetails = usersService.loadUserByUsername(email);
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails,
-                                    null,
-                                    userDetails.getAuthorities()
-                            );
+                // Création de l'authentification Spring Security
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
 
-                    authentication.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (Exception e) {
+                // Token invalide → on laisse passer sans authentification
             }
         }
 

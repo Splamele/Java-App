@@ -35,12 +35,18 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
         try {
-            Users user = authService.registerUser(request.getEmail(), request.getUsername(), request.getPassword());
+            Users user = authService.registerUser(
+                    request.getEmail(),
+                    request.getUsername(),
+                    request.getPassword(),
+                    request.getRole()  // <-- récupère ici
+            );
             return ResponseEntity.ok("Utilisateur créé avec succès !");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
     // Endpoint connexion
     @PostMapping("/login")
@@ -60,8 +66,13 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        // 👉 Utilisation de JwtTokenManager (et plus JwtUtils)
-        String token = JwtTokenManager.generateToken(user.getEmail());
+        List<String> role = user.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        String token = JwtTokenManager.generateToken(user.getEmail(), role);
+
 
         return ResponseEntity.ok(
                 new JwtResponse(token, user.getEmail(), roles)

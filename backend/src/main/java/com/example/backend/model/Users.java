@@ -2,6 +2,7 @@ package com.example.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
@@ -30,13 +31,13 @@ public class Users implements UserDetails {
     private List<Role> roles;
 
     private boolean enabled = true;
-
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Override
-    public Collection<Role> getAuthorities() {
-        return roles;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles;
     }
+
 
     @Override
     public String getUsername() {

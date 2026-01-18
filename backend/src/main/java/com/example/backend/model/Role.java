@@ -13,10 +13,10 @@ public class Role implements GrantedAuthority {
     private Integer id;
 
     @Column(nullable = false, unique = true)
-    private String name; // ROLE_USER, ROLE_ADMIN
+    private String name; // exemple : "USER" ou "ADMIN"
 
     @Override
     public String getAuthority() {
-        return name;
+        return "ROLE_" + name; // IMPORTANT ! Spring Security attend "ROLE_" pour hasRole
     }
 }

@@ -7,12 +7,27 @@ import AdminDashboard from '@/views/admin/Dashboard.vue'
 import AdminProducts from '@/views/admin/Products.vue'
 import AdminUsers from '@/views/admin/Users.vue'
 import AdminOrders from '@/views/admin/Orders.vue'
+import Profile from '@/views/user/Profile.vue'
+import Orders from '@/views/user/Orders.vue'
+import CreateOrder from '@/views/user/CreateOrder.vue'
 
 const routes = [
     { path: '/', component: Home },
     { path: '/product/:id', component: ProductDetail, name: 'ProductDetail' },
     { path: '/login', component: Login },
     { path: '/register', component: Register },
+    {
+        path: '/user/profile',
+        component: Profile
+    },
+    {
+        path: '/user/orders',
+        component: Orders
+    },
+    {
+        path: '/user/order',
+        component: CreateOrder
+    },
 
     // ADMIN ROUTES
     { path: '/admin', component: AdminDashboard, meta: { requiresAdmin: true } },

@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.awt.*;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Cette classe va générer et vérifier un token
@@ -20,7 +22,7 @@ public class JwtTokenManager {
      * @param tokenUser
      * @return
      */
-    public static String generateToken(String tokenUser) {
+    public static String generateToken(String tokenUser, List<String> role) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR, 24);
         calendar.add(Calendar.DAY_OF_MONTH, 30);
@@ -32,6 +34,7 @@ public class JwtTokenManager {
                 .compact();
     }
 
+
     public static String getUser(String token) throws Exception {
         Claims claims = Jwts.parser().verifyWith(secretKey()).build().parseSignedClaims(token).getPayload();
 
@@ -42,4 +45,14 @@ public class JwtTokenManager {
         String cleCryptage = "wzUpGa9k4LTV3SHuY8qVrt6wOENkfdes5vLHVc1ex6581Iiq";
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(cleCryptage));
     }
+    public static List<String> getRoles(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.get("roles", List.class);
+    }
+
 }
